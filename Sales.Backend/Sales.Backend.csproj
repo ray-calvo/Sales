@@ -199,6 +199,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Categories\accesorios.png" />
     <Content Include="Content\Categories\Alimentos.png" />
+    <Content Include="Content\Categories\vacunas.png" />
     <Content Include="Content\Products\iphone-x.png" />
     <Content Include="Content\Products\iphone8-plus.png" />
     <Content Include="favicon.ico" />
@@ -208,6 +209,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Properties\PublishProfiles\SalesBackendNuske - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\SalesBackendNuske - Web Deploy1.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />

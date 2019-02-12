@@ -26,16 +26,13 @@
         [Display(Name = "Publish On")]
         [DataType(DataType.Date)]
         public DateTime PublishOn { get; set; }
-
         [Required]
         [StringLength(128)]
         public string UserId { get; set; }
-
-
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
         [JsonIgnore]
         public virtual Category Category { get; set; }
-
-
         [NotMapped]
         public byte[] ImageArray { get; set; }
 

@@ -1,4 +1,4 @@
-﻿namespace Sales.API.Controllers
+﻿ namespace Sales.API.Controllers
 {
     using Sales.API.Helpers;
     using Sales.Common.Models;
@@ -27,13 +27,8 @@
         [ResponseType(typeof(Product))]
         public async Task<IHttpActionResult> GetProduct(int id)
         {
-            var product = await db.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(product);
+            var products = await this.db.Products.Where(p => p.CategoryId == id).ToListAsync();
+            return Ok(products);
         }
 
         // PUT: api/Products/5

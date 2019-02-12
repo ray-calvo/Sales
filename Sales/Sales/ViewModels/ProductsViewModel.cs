@@ -23,9 +23,18 @@
 
         private bool isRefreshing;
         private ObservableCollection<ProductItemViewModel> products;
+        //private CategoryItemViewModel categoryItemViewModel;
         #endregion
 
         #region Propperties
+        public Category Category
+        {
+        
+        get;
+        set;
+        }
+
+
         public string Filter
         {
             get { return this.filter; }
@@ -53,20 +62,25 @@
         #endregion
         public ProductsViewModel()
         {
+            
+        }
+
+        public ProductsViewModel(Category category)
+        {
             instance = this;
+            this.Category = category;
             this.apiService = new ApiService();
             this.dataService = new DataService();
             this.LoadProducts();
+            
         }
         #region Singleton
         private static ProductsViewModel instance;
+       
+
         public static ProductsViewModel GetInstance()
         {
-            if (instance == null)
-            {
-                return new ProductsViewModel();
-            }
-            return instance;
+            return instance; 
         }
         #endregion
 
@@ -76,28 +90,22 @@
             this.IsRefreshing = true;
 
             var connection = await this.apiService.CheckConnection();
-            if (connection.IsSuccess)
+            if (!connection.IsSuccess)
             {
-                var answer = await this.LoadProductsFromAPI();
-                if (answer)
-                {
-                    this.SaveProductsToDB();
-                }
-            }
-            else
-            {
-                await this.LoadProductsFromDB();
+                this.IsRefreshing = false;
+                await Application.Current.MainPage.DisplayAlert(Languages.Error, connection.Message, Languages.Accept);
+                return;
             }
 
-            if (this.MyProducts == null || this.MyProducts.Count == 0)
-                {
-                    this.IsRefreshing = false;
-                    await Application.Current.MainPage.DisplayAlert(Languages.Error, Languages.NoProductsMessage, Languages.Accept);
-                    return;
-                }
-            this.RefreshList();
-            this.IsRefreshing = false;                       
+            var answer = await this.LoadProductsFromAPI();
+            if (answer)
+            {
+                this.RefreshList();
+            }
+
+            this.IsRefreshing = false;
         }
+
 
         private async Task LoadProductsFromDB()
         {
@@ -115,16 +123,16 @@
             var url = Application.Current.Resources["UrlAPI"].ToString();
             var prefix = Application.Current.Resources["UrlPrefix"].ToString();
             var controller = Application.Current.Resources["UrlProductsController"].ToString();
-
-
-            var response = await this.apiService.GetList<Product>(url, prefix, controller, Settings.TokenType, Settings.AccessToken);
+            var response = await this.apiService.GetList<Product>(url, prefix, controller, this.Category.CategoryId, Settings.TokenType, Settings.AccessToken);
             if (!response.IsSuccess)
             {
                 return false;
             }
+
             this.MyProducts = (List<Product>)response.Result;
             return true;
         }
+
 
         public void RefreshList()
         {
@@ -140,7 +148,8 @@
                     ProductId = p.ProductId,
                     PublishOn = p.PublishOn,
                     Remarks = p.Remarks,
-
+                    CategoryId = p.CategoryId,
+                    UserId = p.UserId,
                 });
                 this.Products = new ObservableCollection<ProductItemViewModel>(
                     myListProductItemViewModel.OrderBy(p => p.Description));
@@ -157,7 +166,8 @@
                     ProductId = p.ProductId,
                     PublishOn = p.PublishOn,
                     Remarks = p.Remarks,
-
+                    CategoryId = p.CategoryId,
+                    UserId = p.UserId,
                 }).Where(p => p.Description.ToLower().Contains(this.Filter.ToLower())).ToList();
                 this.Products = new ObservableCollection<ProductItemViewModel>(
                     myListProductItemViewModel.OrderBy(p => p.Description));
